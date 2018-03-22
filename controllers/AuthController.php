@@ -3,6 +3,7 @@
 namespace app\controllers;
 
 
+use app\models\SingupForm;
 use app\models\User;
 use yii\web\Controller;
 use yii\web\Response;
@@ -28,7 +29,7 @@ class AuthController extends Controller
             return $this->goBack();
         }
 
-        return $this->render('/site/login', [
+        return $this->render('login', [
             'model' => $model,
         ]);
     }
@@ -44,18 +45,10 @@ class AuthController extends Controller
 
         return $this->goHome();
     }
-//
-//    public function actionTest()
-//    {
-//       $user= User::findOne(1);
-//       \Yii::$app->user->logout($user);
-//
-//       if(\Yii::$app->user->isGuest)
-//       {
-//           echo 'Гость';
-//       }else{
-//           echo 'Good';
-//       }
-//    }
 
+public function actionSingup()
+{
+ $model = new SingupForm();
+ return $this->render('singup', ['model'=>$model]);
+}
 }
