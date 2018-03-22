@@ -3,7 +3,7 @@
 namespace app\controllers;
 
 
-use app\models\SingupForm;
+use app\models\SignupForm;
 use app\models\User;
 use yii\web\Controller;
 use yii\web\Response;
@@ -46,9 +46,18 @@ class AuthController extends Controller
         return $this->goHome();
     }
 
-public function actionSingup()
+public function actionSignup()
 {
- $model = new SingupForm();
- return $this->render('singup', ['model'=>$model]);
+$model = new SignupForm();
+
+if(\Yii::$app->request->isPost) {
+    $model->load(\Yii::$app->request->post());
+    if ($model->signup())
+      {
+        return $this->redirect(['auth/login']);
+      }
 }
+return $this->render('signup', ['model'=>$model]);
+}
+
 }

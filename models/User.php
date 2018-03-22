@@ -34,7 +34,7 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
     {
         return [
             [['isAdmin'], 'integer'],
-            [['name', 'email', 'password', 'photo'], 'string', 'max' => 255],
+            [['name', 'email', 'password', 'photo', 'fullname'], 'string', 'max' => 255],
         ];
     }
 
@@ -50,6 +50,7 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
             'password' => 'Password',
             'isAdmin' => 'Is Admin',
             'photo' => 'Photo',
+            'fullname' => 'Fullname',
         ];
     }
 
@@ -90,9 +91,9 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
     {
         // TODO: Implement validateAuthKey() method.
     }
-    public static function findByUsername($username)
+    public static function findByEmail($email)
     {
-        return User::find()->where(['name'=>$username])->one();
+        return User::find()->where(['email'=>$email])->one();
     }
     public function validatePassword($password)
     {
@@ -104,5 +105,9 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
         {
             return false;
         }
+    }
+    public function create()
+    {
+        return $this->save(false);
     }
 }
