@@ -3,6 +3,7 @@
 namespace app\controllers;
 
 use app\models\Article;
+use app\models\Category;
 use Yii;
 use yii\data\Pagination;
 use yii\filters\AccessControl;
@@ -63,40 +64,39 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        // build a DB query to get all articles with status = 1
-        $query = Article::find();
+        $data = Article::getAll(5);
+        $categories = Category::getAll();
 
-// get the total number of articles (but do not fetch the article data yet)
-        $count = $query->count();
-
-// create a pagination object with the total count
-        $pagination = new Pagination(['totalCount' => $count, 'pageSize'=>1, ]);
-
-// limit the query using the pagination and retrieve the articles
-        $articles = $query->offset($pagination->offset)
-            ->limit($pagination->limit)
-            ->all();
-
-
-
-        return $this->render('index',
-            ['articles'=>$articles,
-             'pagination'=>$pagination,
-                ]);
-
+        return $this->render('index',[
+            'articles'=>$data['articles'],
+            'pagination'=>$data['pagination'],
+            'categories'=>$categories
+        ]);
     }
 
-
-
-
-public function actionView()
-{
-    return $this->render('single');
-}
-
-    public function actionUsers()
+    public function actionView($id)
     {
-        return $this->render('users');
+        $article = Article::findOne($id);
+        $categories = Category::getAll();
+
+        return $this->render('single',[
+            'article'=>$article,
+            'categories'=>$categories,
+
+        ]);
+    }
+
+    public function actionCategory($id)
+    {
+
+        $data = Category::getArticlesByCategory($id);
+        $categories = Category::getAll();
+
+        return $this->render('category',[
+            'articles'=>$data['articles'],
+            'pagination'=>$data['pagination'],
+            'categories'=>$categories
+        ]);
     }
 
 
@@ -105,26 +105,12 @@ public function actionView()
      *
      * @return Response|string
      */
-    public function actionContact()
-    {
-        $model = new ContactForm();
-        if ($model->load(Yii::$app->request->post()) && $model->contact(Yii::$app->params['adminEmail'])) {
-            Yii::$app->session->setFlash('contactFormSubmitted');
 
-            return $this->refresh();
-        }
-        return $this->render('contact', [
-            'model' => $model,
-        ]);
-    }
 
-    /**
-     * Displays about page.
-     *
-     * @return string
-     */
-    public function actionAbout()
+
+
+    public function actionUsers()
     {
-        return $this->render('about');
+        return $this->render('users');
     }
 }

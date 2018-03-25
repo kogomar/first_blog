@@ -3,6 +3,7 @@
 namespace app\models;
 
 use Yii;
+use yii\data\Pagination;
 
 /**
  * This is the model class for table "article".
@@ -64,6 +65,12 @@ class Article extends \yii\db\ActiveRecord
         ];
     }
 
+    public function saveArticle()
+    {
+        $this->user_id=Yii::$app->user->id;
+        return $this->save();
+    }
+
 public function saveImage($filename)
 {
     $this->image = $filename;
@@ -102,6 +109,33 @@ if($category != null)
     return true;
 }
 
-
 }
+
+    public function getAuthor()
+    {
+        return $this->hasOne(User::className(), ['id'=>'user_id']);
+    }
+
+
+    public static function getAll($pageSize = 5)
+    {
+        // build a DB query to get all articles
+        $query = Article::find();
+
+        // get the total number of articles (but do not fetch the article data yet)
+        $count = $query->count();
+
+        // create a pagination object with the total count
+        $pagination = new Pagination(['totalCount' => $count, 'pageSize'=>$pageSize]);
+
+        // limit the query using the pagination and retrieve the articles
+        $articles = $query->offset($pagination->offset)
+            ->limit($pagination->limit)
+            ->all();
+
+        $data['articles'] = $articles;
+        $data['pagination'] = $pagination;
+
+        return $data;
+    }
 }
