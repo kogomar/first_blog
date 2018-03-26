@@ -4,6 +4,7 @@ namespace app\controllers;
 
 use app\models\Article;
 use app\models\Category;
+use app\models\User;
 use Yii;
 use yii\data\Pagination;
 use yii\filters\AccessControl;
@@ -12,6 +13,7 @@ use yii\web\Response;
 use yii\filters\VerbFilter;
 use app\models\LoginForm;
 use app\models\ContactForm;
+use app\models\Profile;
 
 class SiteController extends Controller
 {
@@ -23,10 +25,15 @@ class SiteController extends Controller
         return [
             'access' => [
                 'class' => AccessControl::className(),
-                'only' => ['logout'],
+                'only' => ['logout', 'profile'],
                 'rules' => [
                     [
                         'actions' => ['logout'],
+                        'allow' => true,
+                        'roles' => ['@'],
+                    ],
+                    [
+                        'actions' => ['profile'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -111,6 +118,38 @@ class SiteController extends Controller
 
     public function actionUsers()
     {
-        return $this->render('users');
+        $data = User::getAllUsers(10);
+        return $this->render('users',[
+            'users'=>$data['user'],
+            'pagination'=>$data['pagination']
+                ]);
     }
+
+    public function actionPromo($id)
+    {
+        $article = Article::findOne($id);
+        $categories = Category::getAll();
+
+        return $this->render('single',[
+            'article'=>$article,
+            'categories'=>$categories,
+
+        ]);
+    }
+public function actionProfile()
+{
+    $model = ($model=Profile::findOne(Yii::$app->user->id)) ? $model : new Profile();
+    if($model->load(Yii::$app->request->post()) && $model->validate() ):
+        if($model->updateProfile()):
+            Yii::$app->session->setFlash('success', 'Your profile is update');
+
+    else:
+        Yii::$app->session->setFlash('error', 'Your profile not update');
+        Yii::error('Error');
+        return $this->refresh();
+        endif;
+    endif;
+
+    return $this->render('profile',['model'=>$model]);
+}
 }

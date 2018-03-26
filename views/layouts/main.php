@@ -40,16 +40,18 @@ PublicAsset::register($this);
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="index"><img src="/public/images/logo.jpg" alt=""></a>
+                <a class="navbar-brand" href="<?= Url::toRoute(['site/index'])?>"><img src="/public/images/logo.jpg" alt=""></a>
             </div>
 
 
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 
                 <ul class="nav navbar-nav text-uppercase">
-                    <li><a data-toggle="dropdown" class="dropdown-toggle" href="/">Home</a></li>
+                    <li><a data-toggle="dropdown" class="dropdown-toggle" href="<?= Url::toRoute(['site/index'])?>">Home</a></li>
 
-                    <li><a data-toggle="dropdown" class="dropdown-toggle" href="site/users">Users</a></li>
+                    <li><a data-toggle="dropdown" class="dropdown-toggle" href="<?= Url::toRoute(['site/users'])?>">Users</a></li>
+                    <li><a data-toggle="dropdown" class="dropdown-toggle" href="<?= Url::toRoute(['promo/index'])?>">Add Article</a></li>
+                    <li><a data-toggle="dropdown" class="dropdown-toggle" href="<?= Url::toRoute(['site/profile'])?>">Profile</a></li>
                 </ul>
                 <div class="i_con">
                     <ul class="nav navbar-nav text-uppercase">

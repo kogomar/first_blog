@@ -3,6 +3,7 @@
 namespace app\models;
 
 use Yii;
+use yii\data\Pagination;
 use yii\web\IdentityInterface;
 
 /**
@@ -14,11 +15,12 @@ use yii\web\IdentityInterface;
  * @property string $password
  * @property int $isAdmin
  * @property string $photo
- *
+ *@property Profile $profile
  * @property Comment[] $comments
  */
 class User extends \yii\db\ActiveRecord implements IdentityInterface
 {
+    public  $users;
     /**
      * @inheritdoc
      */
@@ -53,7 +55,10 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
             'fullname' => 'Fullname',
         ];
     }
-
+public function  getProfile()
+{
+    return $this->hasOne(Profile::className(), ['user_id'=>'id']);
+}
     /**
      * @return \yii\db\ActiveQuery
      */
@@ -109,5 +114,27 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
     public function create()
     {
         return $this->save(false);
+    }
+
+    public static function getAllUsers($pageSize = 5)
+    {
+        // build a DB query to get all articles
+        $query = User::find();
+
+        // get the total number of articles (but do not fetch the article data yet)
+        $count = $query->count();
+
+        // create a pagination object with the total count
+        $pagination = new Pagination(['totalCount' => $count, 'pageSize'=>$pageSize]);
+
+        // limit the query using the pagination and retrieve the articles
+        $users = $query->offset($pagination->offset)
+            ->limit($pagination->limit)
+            ->all();
+
+        $data['user'] = $users;
+        $data['pagination'] = $pagination;
+
+        return $data;
     }
 }
